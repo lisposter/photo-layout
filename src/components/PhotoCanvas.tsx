@@ -46,7 +46,7 @@ export default function PhotoCanvas({
 
   return (
     <div
-      className="bg-white border-2 border-blue-600 grid gap-0.5 relative"
+      className="bg-white border-2 border-blue-600 print:border-none print:bg-transparent grid gap-0.5 relative"
       style={{
         width: canvasWidth,
         height: canvasHeight,

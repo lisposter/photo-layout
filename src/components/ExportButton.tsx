@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { exportGridToImage } from "../utils/canvasExport";
+import { useReactToPrint } from "react-to-print";
 
 interface Layout {
   name: string;
@@ -9,9 +10,10 @@ interface Layout {
 interface Props {
   gridData: (string | null)[];
   layout: Layout;
+  canvasRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function ExportButton({ gridData, layout }: Props) {
+export default function ExportButton({ gridData, layout, canvasRef }: Props) {
   const ref = useRef<HTMLAnchorElement>(null);
 
   const handleExport = async () => {
@@ -23,9 +25,9 @@ export default function ExportButton({ gridData, layout }: Props) {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = useReactToPrint({
+    contentRef: canvasRef, // Ensure the correct DOM element is returned
+  });
 
   return (
     <>

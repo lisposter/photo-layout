@@ -92,7 +92,7 @@ export default function GridCell({
       ref={setRefs}
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleFileDrop}
-      className={`w-full h-full bg-gray-200 border border-dashed border-gray-400 flex items-center justify-center overflow-hidden relative ${
+      className={`w-full h-full bg-gray-200 border border-dashed border-gray-400 print:border-none print:bg-transparent flex items-center justify-center overflow-hidden relative ${
         image ? "cursor-grab" : "cursor-pointer"
       } ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
@@ -104,7 +104,7 @@ export default function GridCell({
           className="w-full h-full object-cover pointer-events-none select-none"
         />
       ) : (
-        <span className="text-gray-500 text-sm">拖拽图片到此</span>
+        <span className="text-gray-500 text-sm print:hidden">拖拽图片到此</span>
       )}
     </div>
   );

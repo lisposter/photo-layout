@@ -17,6 +17,7 @@ export default function Home() {
   const [gridData, setGridData] = useState<(string | null)[]>(
     Array(layout.rows * layout.cols).fill(null)
   );
+  const canvasRef = React.useRef<HTMLDivElement>(null); // 新增引用
 
   // 当布局变化时，重置画布
   React.useEffect(() => {
@@ -46,11 +47,15 @@ export default function Home() {
             />
           </div>
           <div style={{ marginTop: 24 }}>
-            <ExportButton gridData={gridData} layout={layout} />
+            <ExportButton
+              gridData={gridData}
+              layout={layout}
+              canvasRef={canvasRef} // 传递引用
+            />
           </div>
         </div>
         {/* 右侧画布区 */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1 }} ref={canvasRef}> {/* 绑定引用 */}
           <PhotoCanvas
             images={images}
             gridData={gridData}
