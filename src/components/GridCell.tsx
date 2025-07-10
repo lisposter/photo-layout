@@ -5,8 +5,9 @@ const CELL_TYPE = "CELL_IMAGE";
 
 interface DragItem {
   type: string;
-  image: string;
+  image?: string;
   fromCellIdx?: number;
+  file?: File;
 }
 
 interface Props {
@@ -22,29 +23,30 @@ export default function GridCell({
   onDropImage,
   onSwap,
 }: Props) {
-  // 1. 可将图片拖入格子
   const [, drop] = useDrop<DragItem>({
-    accept: CELL_TYPE,
+    accept: [CELL_TYPE, "LIB_IMAGE", "FILE"],
     drop: (item) => {
-      // 如果来自别的格子，则交换
-      if (item.fromCellIdx !== undefined) {
+      if (item.file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          onDropImage(index, e.target!.result as string);
+        };
+        reader.readAsDataURL(item.file);
+      } else if (item.fromCellIdx !== undefined) {
         if (item.fromCellIdx !== index) {
           onSwap(item.fromCellIdx, index);
         }
-      } else {
-        // 来自图片库
+      } else if (item.image) {
         onDropImage(index, item.image);
       }
     },
     canDrop: (item) => {
-      // 不能自己拖到自己
       if (item.fromCellIdx !== undefined && item.fromCellIdx === index)
         return false;
       return true;
     },
   });
 
-  // 2. 可将格子内容拖出（即格子间拖拽排序）
   const [{ isDragging }, drag] = useDrag({
     type: CELL_TYPE,
     item: () => ({
@@ -58,7 +60,6 @@ export default function GridCell({
     }),
   });
 
-  // 支持图片库拖入
   const [, dropImgLib] = useDrop<DragItem>({
     accept: "LIB_IMAGE",
     drop: (item) => {
@@ -66,45 +67,44 @@ export default function GridCell({
     },
   });
 
-  // 合并ref
   const setRefs = (node: HTMLDivElement | null) => {
     drag(node);
     drop(node);
     dropImgLib(node);
   };
 
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    if (files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        onDropImage(index, event.target!.result as string);
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  };
+
   return (
     <div
       ref={setRefs}
-      style={{
-        width: "100%",
-        height: "100%",
-        background: "#eee",
-        border: "1px dashed #aaa",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        cursor: image ? "grab" : "pointer",
-        opacity: isDragging ? 0.5 : 1,
-        position: "relative",
-      }}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleFileDrop}
+      className={`w-full h-full bg-gray-200 border border-dashed border-gray-400 flex items-center justify-center overflow-hidden relative ${
+        image ? "cursor-grab" : "cursor-pointer"
+      } ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
       {image ? (
         <img
           src={image}
           alt="img"
           draggable={false}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            pointerEvents: "none",
-            userSelect: "none",
-          }}
+          className="w-full h-full object-cover pointer-events-none select-none"
         />
       ) : (
-        <span style={{ color: "#bbb", fontSize: 14 }}>拖拽图片到此</span>
+        <span className="text-gray-500 text-sm">拖拽图片到此</span>
       )}
     </div>
   );

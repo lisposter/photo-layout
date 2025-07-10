@@ -28,9 +28,9 @@ export default function ImageUploader({ images, setImages }: Props) {
         accept="image/*"
         multiple
         onChange={(e) => e.target.files && onFiles(e.target.files)}
-        style={{ marginBottom: 12 }}
+        className="mb-3"
       />
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+      <div className="flex flex-wrap gap-2">
         {images.map((img, i) => (
           <DraggableImage key={i} img={img} />
         ))}
@@ -52,15 +52,9 @@ function DraggableImage({ img }: { img: string }) {
       ref={drag}
       src={img}
       alt="thumb"
-      style={{
-        width: 60,
-        height: 60,
-        objectFit: "cover",
-        border: "1px solid #ccc",
-        opacity: isDragging ? 0.5 : 1,
-        cursor: "grab",
-        background: "#fff",
-      }}
+      className={`w-15 h-15 object-cover border border-gray-300 bg-white ${
+        isDragging ? "opacity-50" : "opacity-100"
+      } cursor-grab`}
     />
   );
 }

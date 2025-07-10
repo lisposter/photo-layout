@@ -22,9 +22,9 @@ export default function PhotoCanvas({
 }: Props) {
   const { rows, cols } = layout;
 
-  // 画布宽高比例4x6, 这里用600x400显示（实际导出用1800x1200）
-  const canvasWidth = 600;
-  const canvasHeight = 400;
+  // Maintain a 4x6 aspect ratio
+  const canvasWidth = 400;
+  const canvasHeight = 600;
 
   // 拖拽到格子
   const onDropImageToCell = (cellIdx: number, img: string) => {
@@ -46,16 +46,12 @@ export default function PhotoCanvas({
 
   return (
     <div
+      className="bg-white border-2 border-blue-600 grid gap-0.5 relative"
       style={{
         width: canvasWidth,
         height: canvasHeight,
-        background: "#fff",
-        border: "2px solid #1677ff",
-        display: "grid",
         gridTemplateRows: `repeat(${rows}, 1fr)`,
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
-        gap: 2,
-        position: "relative",
       }}
     >
       {Array(rows * cols)

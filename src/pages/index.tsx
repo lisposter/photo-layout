@@ -7,8 +7,8 @@ import PhotoCanvas from "../components/PhotoCanvas";
 import ExportButton from "../components/ExportButton";
 
 const LAYOUTS = [
-  { name: "4x4", rows: 4, cols: 4 },
   { name: "2x2", rows: 2, cols: 2 },
+  { name: "4x4", rows: 4, cols: 4 },
 ];
 
 export default function Home() {
@@ -38,25 +38,25 @@ export default function Home() {
         <div style={{ width: 250, flexShrink: 0 }}>
           <h2>上传照片</h2>
           <ImageUploader images={images} setImages={setImages} />
-        </div>
-        {/* 右侧画布和控制区 */}
-        <div style={{ flex: 1 }}>
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginTop: 16 }}>
             <LayoutSelector
               layouts={LAYOUTS}
               layout={layout}
               setLayout={setLayout}
             />
           </div>
+          <div style={{ marginTop: 24 }}>
+            <ExportButton gridData={gridData} layout={layout} />
+          </div>
+        </div>
+        {/* 右侧画布区 */}
+        <div style={{ flex: 1 }}>
           <PhotoCanvas
             images={images}
             gridData={gridData}
             setGridData={setGridData}
             layout={layout}
           />
-          <div style={{ marginTop: 24 }}>
-            <ExportButton gridData={gridData} layout={layout} />
-          </div>
         </div>
       </div>
     </DndProvider>

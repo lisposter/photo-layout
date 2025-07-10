@@ -23,24 +23,25 @@ export default function ExportButton({ gridData, layout }: Props) {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <>
       <button
         onClick={handleExport}
-        style={{
-          padding: "8px 24px",
-          background: "#1677ff",
-          color: "#fff",
-          border: "none",
-          borderRadius: 4,
-          fontWeight: 500,
-          fontSize: 16,
-          cursor: "pointer",
-        }}
+        className="px-6 py-2 bg-blue-600 text-white rounded font-medium text-lg hover:bg-blue-700"
       >
-        导出高清图片（适合打印）
+        导出
       </button>
-      <a ref={ref} style={{ display: "none" }}>
+      <button
+        onClick={handlePrint}
+        className="px-6 py-2 bg-blue-600 text-white rounded font-medium text-lg hover:bg-blue-700 ml-4"
+      >
+        打印拼图
+      </button>
+      <a ref={ref} className="hidden">
         download
       </a>
     </>
