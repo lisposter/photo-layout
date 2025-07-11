@@ -13,15 +13,19 @@ interface DragItem {
 interface Props {
   index: number;
   image: string | null;
+  rotation: number; // New prop for rotation
   onDropImage: (cellIdx: number, img: string) => void;
   onSwap: (fromIdx: number, toIdx: number) => void;
+  onRotate: (cellIdx: number) => void; // New prop for rotation handler
 }
 
 export default function GridCell({
   index,
   image,
+  rotation,
   onDropImage,
   onSwap,
+  onRotate,
 }: Props) {
   const [, drop] = useDrop<DragItem>({
     accept: [CELL_TYPE, "LIB_IMAGE", "FILE"],
@@ -97,12 +101,28 @@ export default function GridCell({
       } ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
       {image ? (
-        <img
-          src={image}
-          alt="img"
-          draggable={false}
-          className="w-full h-full object-cover pointer-events-none select-none"
-        />
+        <>
+          <img
+            src={image}
+            alt="img"
+            draggable={false}
+            style={{
+              transform: `rotate(${rotation}deg)`, // Apply rotation
+              objectFit: "contain", // Ensure proportional scaling
+              width: rotation % 180 === 0 ? "100%" : "auto", // Adjust width for rotation
+              height: rotation % 180 === 0 ? "auto" : "100%", // Adjust height for rotation
+              maxWidth: "100%", // Ensure it doesn't exceed cell bounds
+              maxHeight: "100%", // Ensure it doesn't exceed cell bounds
+            }}
+            className="pointer-events-none select-none"
+          />
+          <button
+            onClick={() => onRotate(index)} // Rotate button
+            className="absolute bottom-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded"
+          >
+            旋转
+          </button>
+        </>
       ) : (
         <span className="text-gray-500 text-sm print:hidden">拖拽图片到此</span>
       )}

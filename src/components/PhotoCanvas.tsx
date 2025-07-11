@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import GridCell from "./GridCell";
 
 interface Layout {
@@ -12,6 +12,7 @@ interface Props {
   gridData: (string | null)[];
   setGridData: (d: (string | null)[]) => void;
   layout: Layout;
+  gap: number; // 新增 gap 属性
 }
 
 export default function PhotoCanvas({
@@ -19,12 +20,26 @@ export default function PhotoCanvas({
   gridData,
   setGridData,
   layout,
+  gap,
 }: Props) {
   const { rows, cols } = layout;
 
   // Maintain a 4x6 aspect ratio
   const canvasWidth = 400;
   const canvasHeight = 600;
+
+  const [rotationData, setRotationData] = useState<number[]>(
+    Array(rows * cols).fill(0)
+  );
+
+  // Rotate image in a cell
+  const onRotateCell = (cellIdx: number) => {
+    setRotationData((prev) => {
+      const next = [...prev];
+      next[cellIdx] = (next[cellIdx] + 90) % 360;
+      return next;
+    });
+  };
 
   // 拖拽到格子
   const onDropImageToCell = (cellIdx: number, img: string) => {
@@ -46,12 +61,13 @@ export default function PhotoCanvas({
 
   return (
     <div
-      className="bg-white border-2 border-blue-600 print:border-none print:bg-transparent grid gap-0.5 relative"
+      className="bg-white border-2 border-blue-600 print:border-none print:bg-transparent grid relative"
       style={{
         width: canvasWidth,
         height: canvasHeight,
         gridTemplateRows: `repeat(${rows}, 1fr)`,
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gap: `${gap}px`, // 应用 gap
       }}
     >
       {Array(rows * cols)
@@ -61,8 +77,10 @@ export default function PhotoCanvas({
             key={idx}
             index={idx}
             image={gridData[idx]}
+            rotation={rotationData[idx]} // Pass rotation
             onDropImage={onDropImageToCell}
             onSwap={onSwapCell}
+            onRotate={onRotateCell} // Pass rotate handler
           />
         ))}
     </div>

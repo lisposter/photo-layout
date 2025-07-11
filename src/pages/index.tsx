@@ -18,6 +18,7 @@ export default function Home() {
     Array(layout.rows * layout.cols).fill(null)
   );
   const canvasRef = React.useRef<HTMLDivElement>(null); // 新增引用
+  const [gap, setGap] = useState(1); // 新增 gap 状态
 
   // 当布局变化时，重置画布
   React.useEffect(() => {
@@ -46,6 +47,19 @@ export default function Home() {
               setLayout={setLayout}
             />
           </div>
+          <div style={{ marginTop: 16 }}>
+            <label>
+              <span>格子间距:</span>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                value={gap}
+                onChange={(e) => setGap(Number(e.target.value))}
+                style={{ marginLeft: 8 }}
+              />
+            </label>
+          </div>
           <div style={{ marginTop: 24 }}>
             <ExportButton
               gridData={gridData}
@@ -61,6 +75,7 @@ export default function Home() {
             gridData={gridData}
             setGridData={setGridData}
             layout={layout}
+            gap={gap} // 传递 gap
           />
         </div>
       </div>
