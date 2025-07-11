@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { useDrop, useDrag } from "react-dnd";
 
@@ -10,10 +11,20 @@ interface DragItem {
   file?: File;
 }
 
+interface LayoutConfig {
+  canvasWidth: number;
+  canvasHeight: number;
+  cols: number;
+  rows: number;
+  gap: number;
+  padding?: number;
+}
+
 interface Props {
   index: number;
   image: string | null;
   rotation: number; // New prop for rotation
+  layoutConfig: LayoutConfig; // Added layoutConfig
   onDropImage: (cellIdx: number, img: string) => void;
   onSwap: (fromIdx: number, toIdx: number) => void;
   onRotate: (cellIdx: number) => void; // New prop for rotation handler
@@ -23,10 +34,23 @@ export default function GridCell({
   index,
   image,
   rotation,
+  layoutConfig,
   onDropImage,
   onSwap,
   onRotate,
 }: Props) {
+
+  console.log('===', layoutConfig)
+  // 计算每一个 cell 的最大宽高
+  const cellWidth =
+    (layoutConfig.canvasWidth - (layoutConfig.padding || 0) * 2) /
+    layoutConfig.cols;
+  const cellHeight =
+    (layoutConfig.canvasHeight - (layoutConfig.padding || 0) * 2) /
+    layoutConfig.rows;
+  const maxCellWidth = cellWidth - layoutConfig.gap * (layoutConfig.cols - 1);
+  const maxCellHeight = cellHeight - layoutConfig.gap * (layoutConfig.rows - 1);
+
   const [, drop] = useDrop<DragItem>({
     accept: [CELL_TYPE, "LIB_IMAGE", "FILE"],
     drop: (item) => {
@@ -67,7 +91,9 @@ export default function GridCell({
   const [, dropImgLib] = useDrop<DragItem>({
     accept: "LIB_IMAGE",
     drop: (item) => {
-      onDropImage(index, item.image);
+      if (item.image) {
+        onDropImage(index, item.image);
+      }
     },
   });
 
@@ -111,14 +137,14 @@ export default function GridCell({
               objectFit: "contain", // Ensure proportional scaling
               width: rotation % 180 === 0 ? "100%" : "auto", // Adjust width for rotation
               height: rotation % 180 === 0 ? "auto" : "100%", // Adjust height for rotation
-              maxWidth: "100%", // Ensure it doesn't exceed cell bounds
+              maxWidth: Math.max(maxCellHeight, maxCellWidth), 
               maxHeight: "100%", // Ensure it doesn't exceed cell bounds
             }}
             className="pointer-events-none select-none"
           />
           <button
             onClick={() => onRotate(index)} // Rotate button
-            className="absolute bottom-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded"
+            className="absolute print:hidden bottom-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded"
           >
             旋转
           </button>

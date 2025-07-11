@@ -13,14 +13,15 @@ interface Props {
   setGridData: (d: (string | null)[]) => void;
   layout: Layout;
   gap: number; // 新增 gap 属性
+  padding: number; // Add padding property
 }
 
 export default function PhotoCanvas({
-  images,
   gridData,
   setGridData,
   layout,
   gap,
+  padding, // Destructure padding
 }: Props) {
   const { rows, cols } = layout;
 
@@ -63,8 +64,9 @@ export default function PhotoCanvas({
     <div
       className="bg-white border-2 border-blue-600 print:border-none print:bg-transparent grid relative"
       style={{
-        width: canvasWidth,
-        height: canvasHeight,
+        width: canvasWidth + padding * 2, // Apply padding to width
+        height: canvasHeight + padding * 2, // Apply padding to height
+        padding: `${padding}px`, // Set padding
         gridTemplateRows: `repeat(${rows}, 1fr)`,
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
         gap: `${gap}px`, // 应用 gap
@@ -78,6 +80,14 @@ export default function PhotoCanvas({
             index={idx}
             image={gridData[idx]}
             rotation={rotationData[idx]} // Pass rotation
+            layoutConfig={{
+              rows,
+              cols,
+              canvasWidth,
+              canvasHeight,
+              gap,
+              padding, // Pass padding to layoutConfig
+            }}
             onDropImage={onDropImageToCell}
             onSwap={onSwapCell}
             onRotate={onRotateCell} // Pass rotate handler

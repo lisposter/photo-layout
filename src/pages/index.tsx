@@ -19,6 +19,7 @@ export default function Home() {
   );
   const canvasRef = React.useRef<HTMLDivElement>(null); // 新增引用
   const [gap, setGap] = useState(1); // 新增 gap 状态
+  const [padding, setPadding] = useState(4); // 新增 padding 状态
 
   // 当布局变化时，重置画布
   React.useEffect(() => {
@@ -60,6 +61,19 @@ export default function Home() {
               />
             </label>
           </div>
+          <div style={{ marginTop: 16 }}>
+            <label>
+              <span>画布内边距:</span>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={padding}
+                onChange={(e) => setPadding(Number(e.target.value))}
+                style={{ marginLeft: 8 }}
+              />
+            </label>
+          </div>
           <div style={{ marginTop: 24 }}>
             <ExportButton
               gridData={gridData}
@@ -76,6 +90,7 @@ export default function Home() {
             setGridData={setGridData}
             layout={layout}
             gap={gap} // 传递 gap
+            padding={padding} 
           />
         </div>
       </div>
